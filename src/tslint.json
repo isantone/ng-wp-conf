@@ -1,0 +1,17 @@
+{
+    "extends": "../tslint.json",
+    "rules": {
+        "directive-selector": [
+            true,
+            "attribute",
+            "wpc",
+            "camelCase"
+        ],
+        "component-selector": [
+            true,
+            "element",
+            "wpc",
+            "kebab-case"
+        ]
+    }
+}
