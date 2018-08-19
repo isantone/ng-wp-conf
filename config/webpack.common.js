@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const helpers = require('./helpers');
 
 const createLodashAliases = require('lodash-loader').createLodashAliases;
@@ -10,9 +11,7 @@ module.exports = {
 
   entry: {
     'polyfills': './src/polyfills.ts',
-    'vendor': './src/vendor.ts',
     'main': './src/main.ts',
-    'styles': './src/styles.scss'
   },
 
   resolve: {
@@ -38,34 +37,75 @@ module.exports = {
           'angular2-template-loader'
         ]
       },
+
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        include: helpers.root('src', 'js'),
+        loaders: [
+          {
+            loader: 'awesome-typescript-loader',
+            options: { configFileName: helpers.root('src', 'tsconfig.app.json') }
+          },
+          {
+            loader: 'lodash-loader',
+            options: { importMode: 'es2015' }
+          },
+        ]
+      },
+
       {
         test: /\.html$/,
         exclude: /node_modules/,
         loader: 'html-loader'
       },
+
       {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
-        loader: 'file-loader?name=assets/[name].[hash].[ext]'
+        loader: 'file-loader?name=assets/[name].[ext]'
       },
-      {
-        test: /\.css$/,
-        exclude: helpers.root('src', 'app'),
-        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader?sourceMap' })
-      },
-      {
-        test: /\.css$/,
-        include: helpers.root('src', 'app'),
-        loader: 'raw-loader'
-      },
-      {
-        test: /\.scss$/,
-        exclude: helpers.root('src', 'app'),
-        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader?sourceMap', 'sass-loader'] })
-      },
+      // {
+      //   test: /\.css$/,
+      //   exclude: helpers.root('src', 'app'),
+      //   loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader?sourceMap' })
+      // },
+      // {
+      //   test: /\.css$/,
+      //   include: helpers.root('src', 'app'),
+      //   loader: 'raw-loader'
+      // },
       {
         test: /\.scss$/,
+        exclude: helpers.root('src', 'app'),
+        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: [
+          'css-loader?sourceMap',
+          {
+            loader: 'sass-loader',
+            options: {
+              data: '@import "variables";',
+              includePaths: [
+                helpers.root('src')
+              ]
+            }
+          }
+        ] })
+      },
+
+      {
+        test: /\.scss$/,
         include: helpers.root('src', 'app'),
-        use: ['raw-loader', 'sass-loader']
+        use: [
+          'raw-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              data: '@import "variables";',
+              includePaths: [
+                helpers.root('src')
+              ]
+            }
+          }
+        ]
       }
     ]
   },
@@ -79,13 +119,14 @@ module.exports = {
       {} // a map of your routes
     ),
 
-    // new config.optimization.splitChunks({
-    //   name: ['app', 'vendor', 'polyfills']
-    // }),
-
     new HtmlWebpackPlugin({
       template: 'src/index.html'
-    })
+    }),
+
+    new CopyWebpackPlugin([
+      helpers.root('src', 'favicon.ico'),
+      helpers.root('src', 'assets')
+    ])
   ],
 
   optimization: {

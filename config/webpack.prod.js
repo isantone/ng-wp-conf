@@ -8,18 +8,16 @@ const helpers = require('./helpers');
 
 const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 
+console.log('------------------------------------------');
+console.log(`| STAFFING DESK BUILD IN ${ENV.toUpperCase()} MODE |`);
+console.log('------------------------------------------');
+
 module.exports = webpackMerge(commonConfig, {
   mode: 'production',
 
-  entry: {
-    'polyfills': './src/polyfills.ts',
-    'main': './src/main.ts',
-    'styles': './src/styles.scss'
-  },
-
   output: {
     path: helpers.root('dist', 'wp-wpc'),
-    publicPath: '/',
+    publicPath: '',
     filename: '[name]-[hash].js',
     chunkFilename: '[name]-[hash].js'
   },
@@ -64,7 +62,7 @@ module.exports = webpackMerge(commonConfig, {
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
 
-    new ExtractTextPlugin('[name].[hash].css'),
+    new ExtractTextPlugin('styles-[hash].css'),
 
     new webpack.DefinePlugin({
       'process.env': {
@@ -72,10 +70,10 @@ module.exports = webpackMerge(commonConfig, {
       }
     }),
 
-    new webpack.LoaderOptionsPlugin({
-      htmlLoader: {
-        minimize: false // workaround for ng2
-      }
-    })
+    // new webpack.LoaderOptionsPlugin({
+    //   htmlLoader: {
+    //     minimize: false // workaround for ng2
+    //   }
+    // })
   ]
 });

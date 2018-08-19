@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -8,13 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  name = 'HeaderComponent';
 
   constructor() { }
 
   ngOnInit() {
-    console.log('hi');
-    console.log('there');
-
-    console.warn(_.intersection([1, 2, 3], [2, 3, 4]));
   }
 }

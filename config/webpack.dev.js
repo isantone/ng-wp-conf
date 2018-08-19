@@ -1,5 +1,6 @@
 const webpackMerge = require('webpack-merge');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 const commonConfig = require('./webpack.common.js');
 const helpers = require('./helpers');
 
@@ -9,16 +10,20 @@ module.exports = webpackMerge(commonConfig, {
 
   cache: true,
 
+  entry: {
+    'vendor': './src/vendor.ts',
+  },
+
   output: {
     path: helpers.root('dist'),
-    publicPath: '/',
+    // publicPath: '/',
     filename: '[name]-[contenthash].js',
     // chunkFilename: '[id].chunk.js'
     chunkFilename: '[name]-[contenthash].js'
   },
 
   plugins: [
-    new ExtractTextPlugin('[name].css')
+    new ExtractTextPlugin('styles-[hash].css')
   ],
 
   devServer: {
